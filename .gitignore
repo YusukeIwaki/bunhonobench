@@ -1,5 +1,7 @@
 node_modules/
 bun-app/node_modules/
+target/
+rust-app/target/
 .bundle/
 vendor/bundle/
 *.log

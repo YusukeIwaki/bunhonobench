@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-// Parallel-access benchmark: Ruby+Sinatra+ActiveRecord vs Bun+Hono+drizzle.
+// Parallel-access benchmark: Ruby+Sinatra+ActiveRecord vs Bun+Hono+drizzle vs Rust+axum+sqlx.
 // Usage: bun bench/bench.mjs [--detail-levels 1,10,50,100,200] [--list-levels 1,10,50]
 //
 // Both targets receive the *identical* request sequence per level (seeded RNG),
@@ -7,6 +7,13 @@
 
 const RUBY = process.env.RUBY_URL ?? 'http://127.0.0.1:4567';
 const BUN = process.env.BUN_URL ?? 'http://127.0.0.1:3000';
+const RUST = process.env.RUST_URL ?? 'http://127.0.0.1:8080';
+
+const TARGETS = [
+  { key: 'ruby', label: 'Ruby', base: RUBY },
+  { key: 'bun', label: 'Bun', base: BUN },
+  { key: 'rust', label: 'Rust', base: RUST },
+];
 const ARTICLE_COUNT = 500;
 const DETAIL_REQS = 3000;
 const LIST_REQS = 500;
@@ -108,16 +115,26 @@ async function runLevel(base, paths, concurrency) {
   };
 }
 
-function printTable(title, rubyRows, bunRows) {
+function printTable(title, byKey) {
   console.log(`\n## ${title}`);
-  const head = '| conc | Ruby req/s | Bun req/s | Ruby p50 | Bun p50 | Ruby p95 | Bun p95 | Ruby p99 | Bun p99 | Ruby err | Bun err |';
+  const labels = TARGETS.map((t) => t.label);
+  const head =
+    `| conc | ${labels.map((l) => `${l} req/s`).join(' | ')} | ` +
+    ['p50', 'p95', 'p99']
+      .map((p) => labels.map((l) => `${l} ${p}`).join(' | '))
+      .join(' | ') +
+    ` | ${labels.map((l) => `${l} err`).join(' | ')} |`;
   console.log(head);
-  console.log('|' + '---:|'.repeat(10));
-  for (let i = 0; i < rubyRows.length; i++) {
-    const r = rubyRows[i];
-    const b = bunRows[i];
+  console.log('|' + '---:|'.repeat(1 + labels.length * 5));
+  const n = byKey[TARGETS[0].key].length;
+  for (let i = 0; i < n; i++) {
+    const rows = TARGETS.map((t) => byKey[t.key][i]);
     console.log(
-      `| ${r.concurrency} | ${r.reqPerSec} | ${b.reqPerSec} | ${r.p50Ms}ms | ${b.p50Ms}ms | ${r.p95Ms}ms | ${b.p95Ms}ms | ${r.p99Ms}ms | ${b.p99Ms}ms | ${r.errors} | ${b.errors} |`,
+      `| ${rows[0].concurrency} | ${rows.map((r) => r.reqPerSec).join(' | ')} | ` +
+        ['p50Ms', 'p95Ms', 'p99Ms']
+          .map((f) => rows.map((r) => `${r[f]}ms`).join(' | '))
+          .join(' | ') +
+        ` | ${rows.map((r) => r.errors).join(' | ')} |`,
     );
   }
 }
@@ -125,17 +142,12 @@ function printTable(title, rubyRows, bunRows) {
 async function measureScenario(name, makePaths, levels, totalReqs) {
   console.log(`\n=== Scenario: ${name} ===`);
   console.log('Health checks:');
-  await checkHealth(RUBY, 'Ruby');
-  await checkHealth(BUN, 'Bun');
+  for (const t of TARGETS) await checkHealth(t.base, t.label);
 
   const seeds = levels.map((_, i) => 1000 + i * 7919);
-  const rubyRows = [];
-  const bunRows = [];
+  const byKey = Object.fromEntries(TARGETS.map((t) => [t.key, []]));
 
-  for (const target of [
-    { label: 'Ruby', base: RUBY, rows: rubyRows },
-    { label: 'Bun', base: BUN, rows: bunRows },
-  ]) {
+  for (const target of TARGETS) {
     console.log(`\n-- warmup ${target.label} (${WARMUP_REQS} reqs, c=${WARMUP_CONCURRENCY}) --`);
     await runLevel(target.base, makePaths(WARMUP_REQS, 42), WARMUP_CONCURRENCY);
     await sleep(500);
@@ -143,13 +155,13 @@ async function measureScenario(name, makePaths, levels, totalReqs) {
       const c = levels[i];
       process.stdout.write(`${target.label} c=${c} ... `);
       const row = await runLevel(target.base, makePaths(totalReqs, seeds[i]), c);
-      target.rows.push(row);
+      byKey[target.key].push(row);
       console.log(`${row.reqPerSec} req/s, p50=${row.p50Ms}ms p95=${row.p95Ms}ms p99=${row.p99Ms}ms err=${row.errors}`);
       await sleep(500);
     }
   }
-  printTable(name, rubyRows, bunRows);
-  return { ruby: rubyRows, bun: bunRows };
+  printTable(name, byKey);
+  return byKey;
 }
 
 async function versions() {
@@ -165,6 +177,9 @@ async function versions() {
   // not whatever `ruby` happens to be on PATH.
   const lock = await Bun.file('ruby-app/Gemfile.lock').text().catch(() => '');
   const gemVer = (name) => lock.match(new RegExp(`^    ${name} \\(([^)]+)\\)`, 'm'))?.[1] ?? 'unknown';
+  const clock = await Bun.file('rust-app/Cargo.lock').text().catch(() => '');
+  const cargoVer = (name) =>
+    clock.match(new RegExp(`name = "${name}"\nversion = "([^"]+)"`))?.[1] ?? 'unknown';
   const nodeVer = async (pkg) => {
     try {
       return (await Bun.file(`bun-app/node_modules/${pkg}/package.json`).json()).version;
@@ -186,13 +201,19 @@ async function versions() {
       'drizzle-orm': await nodeVer('drizzle-orm'),
       pg: await nodeVer('pg'),
     },
+    rustc: (await run(['rustc', '--version'])) || 'unknown',
+    crates: {
+      axum: cargoVer('axum'),
+      sqlx: cargoVer('sqlx'),
+      tokio: cargoVer('tokio'),
+    },
     os: `${process.platform} ${process.arch}`,
     cpu: (await run(['sysctl', '-n', 'machdep.cpu.brand_string'])) || 'unknown',
   };
 }
 
 const { detailLevels, listLevels } = parseArgs();
-console.log(`Targets: Ruby=${RUBY} Bun=${BUN}`);
+console.log(`Targets: Ruby=${RUBY} Bun=${BUN} Rust=${RUST}`);
 console.log(`Detail levels: [${detailLevels}] x${DETAIL_REQS}reqs  List levels: [${listLevels}] x${LIST_REQS}reqs`);
 
 const detail = await measureScenario(
@@ -212,6 +233,7 @@ const result = {
   at: new Date().toISOString(),
   ruby: RUBY,
   bun: BUN,
+  rust: RUST,
   versions: await versions(),
   detail,
   list,

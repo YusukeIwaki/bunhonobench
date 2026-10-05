@@ -1,0 +1,10 @@
+[package]
+name = "rust-app"
+version = "1.0.0"
+edition = "2021"
+
+[dependencies]
+axum = "0.8"
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "time"] }
+sqlx = { version = "0.8", features = ["postgres", "runtime-tokio", "chrono", "macros"] }
+chrono = "0.4"
