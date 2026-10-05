@@ -1,0 +1,7 @@
+<% @title = '記事一覧' %>
+<h2>記事一覧 (<%= @articles.size %>件)</h2>
+<ul>
+<% @articles.each do |a| %>
+<li><a href="/articles/<%= a.id %>.html"><%= h(a.title) %></a> <span><%= fmt_time(a.created_at) %></span><p><%= h(excerpt(a.body)) %></p></li>
+<% end %>
+</ul>

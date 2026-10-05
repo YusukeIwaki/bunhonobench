@@ -1,0 +1,7 @@
+node_modules/
+bun-app/node_modules/
+.bundle/
+vendor/bundle/
+*.log
+.DS_Store
+db/seed.sql

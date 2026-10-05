@@ -1,0 +1,17 @@
+<% @title = @article.title %>
+<article>
+<h2><%= h(@article.title) %></h2>
+<p><%= fmt_time(@article.created_at) %></p>
+<div><% h(@article.body).to_s.split("\n\n").each do |para| %>
+<p><%= para.gsub("\n", '<br>') %></p>
+<% end %></div>
+</article>
+<aside>
+<h3>最新記事</h3>
+<ul>
+<% @latest.each do |a| %>
+<li><a href="/articles/<%= a.id %>.html"><%= h(a.title) %></a></li>
+<% end %>
+</ul>
+</aside>
+<p><a href="/articles.html">一覧に戻る</a></p>

@@ -1,0 +1,291 @@
+{
+  "at": "2026-10-05T14:15:57.675Z",
+  "ruby": "http://127.0.0.1:4567",
+  "bun": "http://127.0.0.1:3000",
+  "versions": {
+    "ruby": "ruby 3.4.9 (2026-03-11 revision 76cca827ab) +PRISM [arm64-darwin24]",
+    "gems": {
+      "sinatra": "4.2.1",
+      "activerecord": "8.1.4",
+      "puma": "6.6.1",
+      "pg": "1.7.0"
+    },
+    "bun": "Bun 1.4.0",
+    "npm": {
+      "hono": "4.13.13",
+      "drizzle-orm": "0.44.7",
+      "pg": "8.23.1"
+    },
+    "os": "darwin arm64",
+    "cpu": "Apple M3"
+  },
+  "detail": {
+    "ruby": [
+      {
+        "concurrency": 1,
+        "requests": 3000,
+        "elapsedSec": 3.9,
+        "reqPerSec": 770.1,
+        "avgMs": 1.3,
+        "p50Ms": 1.09,
+        "p95Ms": 2.38,
+        "p99Ms": 3.74,
+        "maxMs": 13,
+        "errors": 0,
+        "statusHist": {
+          "200": 3000
+        },
+        "completed": 3000
+      },
+      {
+        "concurrency": 10,
+        "requests": 3000,
+        "elapsedSec": 1.19,
+        "reqPerSec": 2513.9,
+        "avgMs": 3.97,
+        "p50Ms": 3.61,
+        "p95Ms": 5.96,
+        "p99Ms": 8.16,
+        "maxMs": 24.97,
+        "errors": 0,
+        "statusHist": {
+          "200": 3000
+        },
+        "completed": 3000
+      },
+      {
+        "concurrency": 50,
+        "requests": 3000,
+        "elapsedSec": 1.79,
+        "reqPerSec": 1673.9,
+        "avgMs": 22.64,
+        "p50Ms": 5.79,
+        "p95Ms": 140.41,
+        "p99Ms": 286.37,
+        "maxMs": 658.11,
+        "errors": 0,
+        "statusHist": {
+          "200": 3000
+        },
+        "completed": 3000
+      },
+      {
+        "concurrency": 100,
+        "requests": 3000,
+        "elapsedSec": 2.13,
+        "reqPerSec": 1411.4,
+        "avgMs": 57.85,
+        "p50Ms": 6.31,
+        "p95Ms": 390.6,
+        "p99Ms": 925.76,
+        "maxMs": 1026.29,
+        "errors": 0,
+        "statusHist": {
+          "200": 3000
+        },
+        "completed": 3000
+      },
+      {
+        "concurrency": 200,
+        "requests": 3000,
+        "elapsedSec": 1.08,
+        "reqPerSec": 2777.3,
+        "avgMs": 54.24,
+        "p50Ms": 0.18,
+        "p95Ms": 587.05,
+        "p99Ms": 1065.41,
+        "maxMs": 1076.66,
+        "errors": 2555,
+        "statusHist": {
+          "200": 445,
+          "EXC": 2555
+        },
+        "completed": 3000
+      }
+    ],
+    "bun": [
+      {
+        "concurrency": 1,
+        "requests": 3000,
+        "elapsedSec": 3.02,
+        "reqPerSec": 994.7,
+        "avgMs": 1.01,
+        "p50Ms": 0.87,
+        "p95Ms": 1.75,
+        "p99Ms": 2.98,
+        "maxMs": 13.06,
+        "errors": 0,
+        "statusHist": {
+          "200": 3000
+        },
+        "completed": 3000
+      },
+      {
+        "concurrency": 10,
+        "requests": 3000,
+        "elapsedSec": 0.64,
+        "reqPerSec": 4720.2,
+        "avgMs": 2.12,
+        "p50Ms": 1.85,
+        "p95Ms": 3.94,
+        "p99Ms": 5.53,
+        "maxMs": 16.64,
+        "errors": 0,
+        "statusHist": {
+          "200": 3000
+        },
+        "completed": 3000
+      },
+      {
+        "concurrency": 50,
+        "requests": 3000,
+        "elapsedSec": 0.56,
+        "reqPerSec": 5344,
+        "avgMs": 9.31,
+        "p50Ms": 7.79,
+        "p95Ms": 14.34,
+        "p99Ms": 54.87,
+        "maxMs": 60.19,
+        "errors": 0,
+        "statusHist": {
+          "200": 3000
+        },
+        "completed": 3000
+      },
+      {
+        "concurrency": 100,
+        "requests": 3000,
+        "elapsedSec": 0.56,
+        "reqPerSec": 5394.1,
+        "avgMs": 18.37,
+        "p50Ms": 17.46,
+        "p95Ms": 25,
+        "p99Ms": 48.35,
+        "maxMs": 50.93,
+        "errors": 0,
+        "statusHist": {
+          "200": 3000
+        },
+        "completed": 3000
+      },
+      {
+        "concurrency": 200,
+        "requests": 3000,
+        "elapsedSec": 0.55,
+        "reqPerSec": 5452.5,
+        "avgMs": 36.02,
+        "p50Ms": 35.05,
+        "p95Ms": 46.9,
+        "p99Ms": 56.85,
+        "maxMs": 60.2,
+        "errors": 0,
+        "statusHist": {
+          "200": 3000
+        },
+        "completed": 3000
+      }
+    ]
+  },
+  "list": {
+    "ruby": [
+      {
+        "concurrency": 1,
+        "requests": 500,
+        "elapsedSec": 10.04,
+        "reqPerSec": 49.8,
+        "avgMs": 20.07,
+        "p50Ms": 19.45,
+        "p95Ms": 23.7,
+        "p99Ms": 26.93,
+        "maxMs": 49.82,
+        "errors": 0,
+        "statusHist": {
+          "200": 500
+        },
+        "completed": 500
+      },
+      {
+        "concurrency": 10,
+        "requests": 500,
+        "elapsedSec": 8.91,
+        "reqPerSec": 56.1,
+        "avgMs": 176.78,
+        "p50Ms": 176.22,
+        "p95Ms": 198.33,
+        "p99Ms": 218.78,
+        "maxMs": 232.53,
+        "errors": 0,
+        "statusHist": {
+          "200": 500
+        },
+        "completed": 500
+      },
+      {
+        "concurrency": 50,
+        "requests": 500,
+        "elapsedSec": 8.94,
+        "reqPerSec": 55.9,
+        "avgMs": 852.93,
+        "p50Ms": 287.29,
+        "p95Ms": 5816.7,
+        "p99Ms": 6082.03,
+        "maxMs": 8447.11,
+        "errors": 0,
+        "statusHist": {
+          "200": 500
+        },
+        "completed": 500
+      }
+    ],
+    "bun": [
+      {
+        "concurrency": 1,
+        "requests": 500,
+        "elapsedSec": 3.13,
+        "reqPerSec": 159.8,
+        "avgMs": 6.26,
+        "p50Ms": 5.67,
+        "p95Ms": 9.95,
+        "p99Ms": 12.96,
+        "maxMs": 16.74,
+        "errors": 0,
+        "statusHist": {
+          "200": 500
+        },
+        "completed": 500
+      },
+      {
+        "concurrency": 10,
+        "requests": 500,
+        "elapsedSec": 2.75,
+        "reqPerSec": 181.7,
+        "avgMs": 54.7,
+        "p50Ms": 54.02,
+        "p95Ms": 72.74,
+        "p99Ms": 82.32,
+        "maxMs": 88.53,
+        "errors": 0,
+        "statusHist": {
+          "200": 500
+        },
+        "completed": 500
+      },
+      {
+        "concurrency": 50,
+        "requests": 500,
+        "elapsedSec": 3.06,
+        "reqPerSec": 163.5,
+        "avgMs": 295.94,
+        "p50Ms": 287.33,
+        "p95Ms": 408.3,
+        "p99Ms": 432.89,
+        "maxMs": 454.97,
+        "errors": 0,
+        "statusHist": {
+          "200": 500
+        },
+        "completed": 500
+      }
+    ]
+  }
+}
